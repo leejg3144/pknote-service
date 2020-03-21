@@ -2,14 +2,18 @@ package com.java.pknote.springboot.service.posts;
 
 import com.java.pknote.springboot.domain.posts.Posts;
 import com.java.pknote.springboot.domain.posts.PostsRepository;
+import com.java.pknote.springboot.web.dto.PostsListResponseDto;
 import com.java.pknote.springboot.web.dto.PostsResponseDto;
 import com.java.pknote.springboot.web.dto.PostsSaveRequestDto;
 import com.java.pknote.springboot.web.dto.PostsUpdateRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
+
 import java.beans.Transient;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -36,5 +40,12 @@ public class PostsService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 게시들이 없습니다. id=" + id));
 
         return new PostsResponseDto(entity);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PostsListResponseDto> findAllDesc() {
+        return postsRepository.findAllDesc().stream()
+                .map(PostsListResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
